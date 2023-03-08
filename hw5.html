@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
     <head>
         <title>Battleship</title>
         <style>
             body{
-                background-color:#f4f4f4;
+                background-color:#51baea;
                 color:#555555;
                 font-family: Arial, Helvetica, sans-serif;
                 font-size: 16px;
@@ -16,7 +16,7 @@
                 overflow: hidden;
             }
             #main-header{ 
-                background-color:rgb(49, 49, 49);
+                background-color:#2982AB;
                 height: 80px;
                 color:#ffffff;
             }
@@ -36,8 +36,8 @@
             }
             #restartButton{
                 margin-top: 10px;
-                padding: 20px;
-                background-color:#e6e4e4; 
+                padding: 15px;
+                background-color:#d1d1d1; 
                 font-size: 20px;   
             }
             .gridContainer {
@@ -55,9 +55,10 @@
             }
             #status{
                 text-align: left;
-                padding: 5px;
-                font-size: 20px;
+                padding: 10px;
+                font-size: 25px;
                 display: left;
+                font-weight: bold;
             }
             #guesses{
                 text-align: right;
@@ -68,9 +69,10 @@
         </style>
     </head>
     <body>
+        
         <header id="main-header">
             <div class="container">
-                <h1>Battleship</h1>
+                <h1>Battleship</h1>                
             </div>
         </header> 
 
@@ -78,10 +80,12 @@
             <section id="main">
                 </br>
                 <div id="status">Play Game!</div> 
+                <!-- Image from: https://pixabay.com/vectors/boat-military-vessel-navy-armed-6986230/ -->
+                <img src="./docs/assets/images/boat.png"  height="75" width="75" alt="Boat">
                 <div id="guesses">Guesses: 0 of 20</div> 
                 <script>
-                    // shipPlacement is a JSON object per homework requirements
-                    var shipPlacement ={
+                    // shipsObject is a JSON object per homework requirements
+                    var shipsObject ={
                         "ships":[
                         {
                             "name":"ship1",
@@ -131,7 +135,7 @@
                     var gameStatus = document.getElementById("status");                   
                     var guessStatus = document.getElementById("guesses");
 
-                    // Square colors for indicating hit status
+                    // Colors for indicating hit status
                     var hitColor = "#FFAC1F";
                     var sunkColor = "#FA6B4B";
                     var missColor = "#62E9F5";
@@ -139,9 +143,8 @@
                     // Create Game Board
                     CreateBoard();
 
-
                     function CreateBoard(){
-                        // Board created as a grid of buttons
+                        // Board created as a grid of button objects
                         // Grid syntax from: https://www.w3schools.com/css/css_grid.asp
                         document.write("<div class='gridContainer'>")
 
@@ -164,10 +167,17 @@
                         for(let i = 0; i < boardButtons.length; i++)
                         {                       
                             boardButtons[i].onclick=function(){
-                                     
+                                
+                                // Increment number of guesses when user clicks a button
                                 numGuesses += 1;
+
+                                // Report guess status to user
                                 guessStatus.innerHTML = "Guesses: " + numGuesses + " of 20"; 
+
+                                // Check whether a ship exists where user clicked
                                 CheckForShip(boardButtons[i]);
+
+                                // Check game status
                                 CheckForGameOver();                             
                             };
                         } // End add click listener to board buttons
@@ -177,37 +187,37 @@
                     function CheckForShip(selectedSquare){
 
                         // Four ships per homework requirements
-                        for(let shipID = 0; shipID < shipPlacement.ships.length; shipID++)
+                        for(let shipID = 0; shipID < shipsObject.ships.length; shipID++)
                         {
-                            // Get id of selected square
+                            // Get id of selected square button
                             let squareID = parseInt(selectedSquare.id);
 
                             // Check if the selected square contains a ship
-                            if(shipPlacement.ships[shipID].coords.includes(squareID)){
+                            if(shipsObject.ships[shipID].coords.includes(squareID)){
                                 
                                 // Get current number of hits on the ship
-                                let hitValue = shipPlacement.ships[shipID].hits;
+                                let hitValue = shipsObject.ships[shipID].hits;
 
                                 // Update the number of hits
                                 let newHitValue = hitValue + 1;
-                                shipPlacement.ships[shipID].hits = newHitValue;
+                                shipsObject.ships[shipID].hits = newHitValue;
 
                                 // Get the size of the ship
-                                let shipsize = shipPlacement.ships[shipID].size;
+                                let shipsize = shipsObject.ships[shipID].size;
 
                                 // Check if all the squares that make up the ship have been found
                                 if (newHitValue == shipsize)
                                 {
                                     // All squares found, report sunk status
-                                    gameStatus.innerHTML="Sunk";
+                                    gameStatus.innerHTML="Sunk!";
 
                                     // Change the color of all the ship's squares to indicate 'sunk' status
-                                    let shipCoords = shipPlacement.ships[shipID].coords;
+                                    let shipCoords = shipsObject.ships[shipID].coords;
                                     shipCoords.forEach(element => boardButtons[element].style.backgroundColor = sunkColor);                                
                                 }
                                 else {
                                     // Report hit status
-                                    gameStatus.innerHTML="Hit";
+                                    gameStatus.innerHTML="Hit!";
                                     
                                     // Change the color of the ship's square to indicate a hit
                                     selectedSquare.style.backgroundColor = hitColor;
@@ -246,9 +256,9 @@
 
 
                     function CheckIfAllShipsFound(){
-                        for(let shipID = 0; shipID < shipPlacement.ships.length; shipID++){
-                            numHits = shipPlacement.ships[shipID].hits;
-                            shipSize = shipPlacement.ships[shipID].size;
+                        for(let shipID = 0; shipID < shipsObject.ships.length; shipID++){
+                            numHits = shipsObject.ships[shipID].hits;
+                            shipSize = shipsObject.ships[shipID].size;
                             if(numHits != shipSize){
                                 // All ships have not been found
                                 return false;
@@ -260,22 +270,24 @@
 
 
                     function ShowAllShips(){
-                        for(let shipID = 0; shipID < shipPlacement.ships.length; shipID++)
+                        for(let shipID = 0; shipID < shipsObject.ships.length; shipID++)
                         {
-                            let shipCoords = shipPlacement.ships[shipID].coords;
+                            let shipCoords = shipsObject.ships[shipID].coords;
                             shipCoords.forEach(element => boardButtons[element].style.backgroundColor = "#FA6B4B");
                         }
                     } // End ShowAllShips
 
 
                     function FreezeGrid(){
+
+                        // Freeze all of the buttons
                         boardButtons.forEach(button => button.disabled = true);
                     } // FreezeGrid
 
 
                     function UnFreezeGrid(){
 
-                        // Disable all of the buttons
+                        // Unfreeze all of the buttons
                         boardButtons.forEach(button => button.disabled = false);
                     } // End UnFreezeGrid
 
@@ -290,20 +302,18 @@
                         guessStatus.innerHTML = "Guesses: " + numGuesses + " of 20"; 
                         
                         // Reset ship hit value
-                        for(let shipID = 0; shipID < shipPlacement.ships.length; shipID++){
-                            shipPlacement.ships[shipID].hits = 0;
+                        for(let shipID = 0; shipID < shipsObject.ships.length; shipID++){
+                            shipsObject.ships[shipID].hits = 0;
                         }
                         
                         // Reset square color
                         for(let i = 0; i < boardButtons.length; i++)
                         {                       
-                            console.log("arrived at reset color")
                             boardButtons[i].style.backgroundColor = "";
                         } 
 
                         UnFreezeGrid();
-                    } // End restart
-                   
+                    } // End restart                  
                 </script>
 
                 <div class="restart">
